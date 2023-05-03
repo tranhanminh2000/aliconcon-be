@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  ali-db:
+    image: mysql:8
+    command: [ "--default-authentication-plugin=mysql_native_password" ]
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    env_file:
+      - ./mysql.env
+
+  ali-web:
+    build:
+      context: .
+      dockerfile: dockerfile
+    depends_on:
+      - ali-db
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./aliconcon.env
+    volumes:
+      - .:/app
+
+volumes:
+  db_data:
